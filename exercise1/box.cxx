@@ -76,6 +76,15 @@ struct box : public implicit_primitive<T>
 				{
 					grad.y() = p.y() > 0 ? 1 : -1;
 				}
+
+				/*if (p.x() == box_length/2 && p.z() * p.x() < 0)
+				{
+					grad.z() = 0;
+				}
+				if (p.x() == box_length / 2 && p.z() * p.x() < 0)
+				{
+					grad.z() = 0;
+				}*/
 			}
 			if (abs(p.x()) == box_length / 2) // limit to surfuce along x-axis.
 			{
@@ -91,6 +100,15 @@ struct box : public implicit_primitive<T>
 				{
 					grad.z() = p.z() > 0 ? 1 : -1;
 				}
+
+				/*if (p.y() == box_length / 2 && p.x() * p.y() < 0)
+				{
+					grad.x() = 0;
+				}
+				if (p.z() == box_length / 2 && p.x() * p.z() < 0)
+				{
+					grad.x() = 0;
+				}*/
 			}
 			if (abs(p.y()) == box_length / 2) // limit to surfuce along y-axis.
 			{
@@ -106,6 +124,15 @@ struct box : public implicit_primitive<T>
 				{
 					grad.z() = p.z() > 0 ? 1 : -1;
 				}
+
+				/*if (p.x() == box_length / 2 && p.y() * p.x() < 0)
+				{
+					grad.y() = 0;
+				}
+				if (p.z() == box_length / 2 && p.y() * p.z() < 0)
+				{
+					grad.y() = 0;
+				}*/
 			}
 		}
 
