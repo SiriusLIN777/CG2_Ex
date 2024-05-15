@@ -60,7 +60,6 @@ void implicit_group<T>::on_set(void* member_ptr)
 	implicit_base<T>::update_scene();
 }
 
-
 template <typename T>
 unsigned int implicit_group<T>::append_child(base_ptr child)
 {

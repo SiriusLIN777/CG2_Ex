@@ -9,13 +9,6 @@ using namespace cgv::base;
 template <typename T>
 class implicit_primitive : public named, public implicit_base<T>
 {
-//protected:
-//	double sphere_radius;
-//
-//	bool gui_check_sphere_radius(cgv::gui::control<double>& sphere_radius);
-//
-//	void gui_sphere_radius_changed(cgv::gui::control<double>& sphere_radius);
-
 public:
 	/// convert to cgv::base::base pointer
 	cgv::base::base* get_base() { return this; }

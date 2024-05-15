@@ -27,16 +27,24 @@ struct sphere : public implicit_primitive<T>
 			implicit_primitive<T>::self_reflect(rh);
 	}
 	
+	double f_sphere(const pnt_type& p) const
+	{
+		return p.sqr_length() - sqr(sphere_radius);
+	}
+	vec_type f_sphere_gradient(const pnt_type& p) const
+	{
+		return p * 2;
+	}
 
 	/// Evaluate the sphere quadric at p
 	T evaluate(const pnt_type& p) const
 	{
-		float f_p = std::numeric_limits<double>::infinity();
+		double f_p = std::numeric_limits<double>::infinity();
 
 		// Task 1.1a: Implement an algebraic function of p that evaluates to 0 on the
 		//            unit sphere.
 
-		f_p = p.sqr_length() - sqr(sphere_radius);
+		f_p = f_sphere(p);
 		
 		return f_p;
 	}
@@ -47,7 +55,7 @@ struct sphere : public implicit_primitive<T>
 		vec_type grad_f_p(0, 0, 0);
 
 		// Task 1.1a: Return the gradient of the function at p.
-		grad_f_p = p * 2;
+		grad_f_p = f_sphere_gradient(p);
 
 		return grad_f_p;
 	}

@@ -1,5 +1,3 @@
-#define SPHERE_RADIUS 200
-
 #include "implicit_primitive.h"
 #include <cgv_reflect_types/media/color.h>
 
@@ -18,8 +16,7 @@ bool implicit_primitive<T>::self_reflect(cgv::reflect::reflection_handler& rh)
 		rh.reflect_member("cr", implicit_base<T>::color[0]) &&
 		rh.reflect_member("cg", implicit_base<T>::color[1]) &&
 		rh.reflect_member("cb", implicit_base<T>::color[2]) &&
-		rh.reflect_member("ca", implicit_base<T>::color[3])/* &&
-		rh.reflect_member("sphere_radius", sphere_radius)*/;
+		rh.reflect_member("ca", implicit_base<T>::color[3]);
 }
 
 template <typename T>
@@ -27,22 +24,6 @@ std::string implicit_primitive<T>::get_type_name() const
 {
 	return "implicit_primitive";
 }
-
-//template<typename T>
-//bool implicit_primitive<T>::gui_check_sphere_radius(cgv::gui::control<double>& sphere_radius)
-//{
-//	if (sphere_radius < 0 || sphere_radius > SPHERE_RADIUS)
-//	{
-//		return false;
-//	}
-//
-//	return true;
-//}
-//
-//template<typename T>
-//void implicit_primitive<T>::gui_sphere_radius_changed(cgv::gui::control<double>& sphere_radius)
-//{
-//}
 
 template <typename T>
 void implicit_primitive<T>::create_gui()
