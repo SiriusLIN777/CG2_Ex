@@ -152,6 +152,8 @@ public:
 		// Task 1.1b: You can outsource logic here that evaluates the operator function
 		//            and reports the index of the relevant child in selected_i
 
+		value = implicit_group::get_implicit_child(selected_i)->evaluate(p);
+
 		return value;
 	}
 
@@ -161,6 +163,13 @@ public:
 
 		// Task 1.1b: Evaluate the difference operator at p.
 
+		/*for (unsigned int i = 0; i < get_nr_children(); ++i) {
+			f_p = f_p < -eval_and_get_index(p, i) ? f_p : -eval_and_get_index(p, i);
+		}*/
+		unsigned int idx_1, idx_2;
+		idx_1 = 0; idx_2 = 1;
+		f_p = eval_and_get_index(p, idx_1) > -eval_and_get_index(p, idx_2) ? eval_and_get_index(p, idx_1) : -eval_and_get_index(p, idx_2);
+
 		return f_p;
 	}
 
@@ -169,6 +178,15 @@ public:
 		vec_type grad_f_p(0, 0, 0);
 
 		// Task 1.1b: Return the gradient of the difference operator at p
+
+		unsigned int idx_1, idx_2;
+		idx_1 = 0; idx_2 = 1;
+
+
+
+		grad_f_p = eval_and_get_index(p, idx_1) > -eval_and_get_index(p, idx_2) ?
+			implicit_group::get_implicit_child(idx_1)->evaluate_gradient(p) :
+			implicit_group::get_implicit_child(idx_2)->evaluate_gradient(p) * -1;
 
 		return grad_f_p;
 	}
