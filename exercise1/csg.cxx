@@ -35,11 +35,8 @@ public:
 		// Task 1.1b: You can outsource logic here that evaluates the operator function
 		//            and reports the index of the relevant child in selected_i
 		
-		implicit_group::get_implicit_child(selected_i);
-		
-		auto obj = implicit_group::get_implicit_child(selected_i);
 		//DEBUG("obj name: " << obj->get_type_name());
-		value = obj->evaluate(p);
+		value = implicit_group::get_implicit_child(selected_i)->evaluate(p);
 		//DEBUG("obj value: " << value);
 		return value;
 	}
@@ -63,7 +60,6 @@ public:
 		vec_type grad_f_p(0, 0, 0);
 
 		// Task 1.1b: Return the gradient of the union operator at p
-
 
 		double f_p = std::numeric_limits<double>::infinity();
 		int idx = 0;
@@ -100,14 +96,20 @@ public:
 		// Task 1.1b: You can outsource logic here that evaluates the operator function
 		//            and reports the index of the relevant child in selected_i
 
+		value = implicit_group::get_implicit_child(selected_i)->evaluate(p);
+
 		return value;
 	}
 
 	T evaluate(const pnt_type& p) const
 	{
-		double f_p = std::numeric_limits<double>::infinity();
+		double f_p = -std::numeric_limits<double>::infinity();
 
 		// Task 1.1b: Evaluate the intersection operator at p.
+
+		for (unsigned int i = 0; i < get_nr_children(); ++i) {
+			f_p = f_p > eval_and_get_index(p, i) ? f_p : eval_and_get_index(p, i);
+		}
 
 		return f_p;
 	}
@@ -117,7 +119,18 @@ public:
 		vec_type grad_f_p(0, 0, 0);
 
 		// Task 1.1b: Return the gradient of the intersection operator at p
+		double f_p = std::numeric_limits<double>::infinity();
+		int idx = 0;
+		for (unsigned int i = 0; i < get_nr_children(); ++i) {
+			//DEBUG("csg evaluate - " << i << ": " << eval_and_get_index(p, i));
+			if (f_p < eval_and_get_index(p, i))
+			{
+				f_p = eval_and_get_index(p, i);
+				idx = i;
+			}
 
+		}
+		grad_f_p = implicit_group::get_implicit_child(idx)->evaluate_gradient(p);
 		return grad_f_p;
 	}
 };
