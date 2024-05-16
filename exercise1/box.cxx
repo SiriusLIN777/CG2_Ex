@@ -1,5 +1,5 @@
-﻿#define MAX_BOX_LENGTH 6.0
-#define MIN_BOX_LENGTH 1.0
+﻿#define MAX_BOX_LENGTH 5.0
+#define MIN_BOX_LENGTH 0.0
 //#define DEBUG_MODE
 //#define INFO_MODE
 
@@ -48,111 +48,128 @@ struct box : public implicit_primitive<T>
 		return  max(abs(p.x()), abs(p.y()), abs(p.z())) - box_length / 2;
 	}
 	// Implicit surface gradient function of BOX
+	//vec_type f_box_gradient(const pnt_type& p) const
+	//{
+	//	INFO("Computing box gradient...");
+	//	vec_type grad(0, 0, 0);
+	//	/*DEBUG("max(abs(p.x()),abs(p.y()),abs(p.z())) == box_length/2" << std::endl 
+	//		<< max(abs(p.x()), abs(p.y()), abs(p.z())) << " == " << box_length / 2 << std::endl
+	//		<< "==: " << ((float)max(abs(p.x()), abs(p.y()), abs(p.z())) == box_length / 2));*/
+	//	
+	//	//if (max(abs(p.x()),abs(p.y()),abs(p.z())) == box_length/2) // limit the points on the surfaces of box
+	//	//{
+	//		// limit to surfuce along z-axis.
+	//		if (abs(p.x()) == box_length / 2) // limit to surfuce along x-axis.
+	//		{
+	//			INFO("On the surface along x...");
+	//			
+	//			// handle inner surface, set gradient x
+	//			grad.x() = p.x() > 0 ? 1 : -1;
+	//			// handel y border edge
+	//			if (abs(p.y()) == box_length / 2)
+	//			{
+	//				grad.y() = p.y() > 0 ? 1 : -1;
+	//			}
+	//			// handel z border edge
+	//			if (abs(p.z()) == box_length / 2)
+	//			{
+	//				grad.z() = p.z() > 0 ? 1 : -1;
+	//			}
+	//			INFO("X-axis surface grad: " << grad);
+	//			/*
+	//			grad.x() = p.x() > 0 ? 1 : -1;
+	//			if (p.y() == box_length / 2 && p.x() * p.y() < 0.0)
+	//			{
+	//				grad.x() = 0.0;
+	//			}
+	//			if (p.z() == box_length / 2 && p.x() * p.z() < 0.0)
+	//			{
+	//				grad.x() = 0.0;
+	//			}*/
+	//		}
+	//		if (abs(p.y()) == box_length / 2) // limit to surfuce along y-axis.
+	//		{
+	//			INFO("On the surface along y...");
+	//			
+	//			// handle inner surface, set gradient y
+	//			grad.y() = p.y() > 0 ? 1 : -1;
+	//			// handel x border edge
+	//			if (abs(p.x()) == box_length / 2)
+	//			{
+	//				grad.x() = p.x() > 0 ? 1 : -1;
+	//			}
+	//			// handel z border edge
+	//			if (abs(p.z()) == box_length / 2)
+	//			{
+	//				grad.z() = p.z() > 0 ? 1 : -1;
+	//			}
+	//			INFO("Y-axis surface grad: " << grad);
+	//			/*
+	//			grad.y() = p.y() > 0 ? 1 : -1;
+	//			if (p.x() == box_length / 2 && p.y() * p.x() < 0.0)
+	//			{
+	//				grad.y() = 0.0;
+	//			}
+	//			if (p.z() == box_length / 2 && p.y() * p.z() < 0.0)
+	//			{
+	//				grad.y() = 0.0;
+	//			}*/
+	//		}
+	//		if (abs(p.z()) == box_length / 2)
+	//		{
+	//			INFO("On the surface along z...");
+	//			
+	//			// handle inner surface, set gradient z
+	//			grad.z() = p.z() > 0 ? 1 : -1;
+	//			// handel x border edge
+	//			if (abs(p.x()) == box_length / 2)
+	//			{
+	//				grad.x() = p.x() > 0 ? 1 : -1;
+	//			}
+	//			// handel y border edge
+	//			if (abs(p.y()) == box_length / 2)
+	//			{
+	//				grad.y() = p.y() > 0 ? 1 : -1;
+	//			}
+	//			INFO("Z-axis surface grad: " << grad);
+	//			/*
+	//			grad.z() = p.z() > 0 ? 1 : -1;
+	//			if (p.x() == box_length / 2 && p.z() * p.x() < 0.0)
+	//			{
+	//				grad.z() = 0.0;
+	//			}
+	//			if (p.x() == box_length / 2 && p.z() * p.x() < 0.0)
+	//			{
+	//				grad.z() = 0.0;
+	//			}*/
+	//		}
+	//	//}
+	//	
+	//
+	//	return grad;
+	//}
+
+	// Compute the gradient of BOX
 	vec_type f_box_gradient(const pnt_type& p) const
 	{
 		INFO("Computing box gradient...");
 		vec_type grad(0, 0, 0);
-		/*DEBUG("max(abs(p.x()),abs(p.y()),abs(p.z())) == box_length/2" << std::endl 
-			<< max(abs(p.x()), abs(p.y()), abs(p.z())) << " == " << box_length / 2 << std::endl
-			<< "==: " << ((float)max(abs(p.x()), abs(p.y()), abs(p.z())) == box_length / 2));*/
 		
-		//if (max(abs(p.x()),abs(p.y()),abs(p.z())) == box_length/2) // limit the points on the surfaces of box
-		//{
-			// limit to surfuce along z-axis.
-			if (abs(p.x()) == box_length / 2) // limit to surfuce along x-axis.
-			{
-				INFO("On the surface along x...");
+		if (abs(p.x()) >= abs(p.y()) && abs(p.x()) >= abs(p.z())) // x is largest.
+		{
+			grad = p.x() > 0 ? vec_type(1, 0, 0) : vec_type(-1, 0, 0);
+		}
+		else if (abs(p.y()) >= abs(p.x()) && abs(p.y()) >= abs(p.z())) // y is lagerst.
+		{
+			grad = p.y() > 0 ? vec_type(0, 1, 0) : vec_type(0, -1, 0);
+		}
+		else if (abs(p.z()) >= abs(p.x()) && abs(p.z()) >= abs(p.y()))
+		{
+			grad = p.z() > 0 ? vec_type(0, 0, 1) : vec_type(0, 0, -1);
+		}
 
-				
-				// handle inner surface, set gradient x
-				grad.x() = p.x() > 0 ? 1 : -1;
-				// handel y border edge
-				if (abs(p.y()) == box_length / 2)
-				{
-					grad.y() = p.y() > 0 ? 1 : -1;
-				}
-				// handel z border edge
-				if (abs(p.z()) == box_length / 2)
-				{
-					grad.z() = p.z() > 0 ? 1 : -1;
-				}
-				INFO("X-axis surface grad: " << grad);
-				/*
-				grad.x() = p.x() > 0 ? 1 : -1;
-				if (p.y() == box_length / 2 && p.x() * p.y() < 0.0)
-				{
-					grad.x() = 0.0;
-				}
-				if (p.z() == box_length / 2 && p.x() * p.z() < 0.0)
-				{
-					grad.x() = 0.0;
-				}*/
-			}
-			if (abs(p.y()) == box_length / 2) // limit to surfuce along y-axis.
-			{
-				INFO("On the surface along y...");
-
-				
-				// handle inner surface, set gradient y
-				grad.y() = p.y() > 0 ? 1 : -1;
-				// handel x border edge
-				if (abs(p.x()) == box_length / 2)
-				{
-					grad.x() = p.x() > 0 ? 1 : -1;
-				}
-				// handel z border edge
-				if (abs(p.z()) == box_length / 2)
-				{
-					grad.z() = p.z() > 0 ? 1 : -1;
-				}
-				INFO("Y-axis surface grad: " << grad);
-				/*
-				grad.y() = p.y() > 0 ? 1 : -1;
-				if (p.x() == box_length / 2 && p.y() * p.x() < 0.0)
-				{
-					grad.y() = 0.0;
-				}
-				if (p.z() == box_length / 2 && p.y() * p.z() < 0.0)
-				{
-					grad.y() = 0.0;
-				}*/
-			}
-			if (abs(p.z()) == box_length / 2)
-			{
-				INFO("On the surface along z...");
-
-				
-				// handle inner surface, set gradient z
-				grad.z() = p.z() > 0 ? 1 : -1;
-				// handel x border edge
-				if (abs(p.x()) == box_length / 2)
-				{
-					grad.x() = p.x() > 0 ? 1 : -1;
-				}
-				// handel y border edge
-				if (abs(p.y()) == box_length / 2)
-				{
-					grad.y() = p.y() > 0 ? 1 : -1;
-				}
-				INFO("Z-axis surface grad: " << grad);
-				/*
-				grad.z() = p.z() > 0 ? 1 : -1;
-				if (p.x() == box_length / 2 && p.z() * p.x() < 0.0)
-				{
-					grad.z() = 0.0;
-				}
-				if (p.x() == box_length / 2 && p.z() * p.x() < 0.0)
-				{
-					grad.z() = 0.0;
-				}*/
-			}
-		//}
-		
-
-	
 		return grad;
 	}
-
 
 	/* [END] Task 1.1a
 	/*********************************************************************************/
@@ -169,8 +186,8 @@ struct box : public implicit_primitive<T>
 		//f_p = max_box(p) - box_length / 2;
 		//f_p = abs(p.x()) + abs(p.y()) + abs(p.z()) - box_length; // 正八面体
 
-		f_p = max(abs(p.x()), abs(p.y()), abs(p.z())) - box_length / 2;
-		//f_p = f_box(p);
+		//f_p = max(abs(p.x()), abs(p.y()), abs(p.z())) - box_length / 2;
+		f_p = f_box(p);
 
 		return f_p;
 	}
