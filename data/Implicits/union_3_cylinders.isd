@@ -4,7 +4,8 @@ numeric_gradient[epsilon=0.0625](
   scale[sx=0.5;sy=0.5;sz=0.5](
     union(
       cylinder,
-      rotate[b=90](cylinder)
+      rotate[nx=-1;ny=0;nz=0](cylinder),
+      rotate[nx=0;ny=-1;nz=0](cylinder)
     )
   )
 )

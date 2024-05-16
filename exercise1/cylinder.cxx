@@ -21,7 +21,7 @@ struct cylinder :  public implicit_primitive<T>
 
 	cylinder() {
 		implicit_base<T>::gui_color = 0xFF8888;
-		cylinder_radius = 1.0;
+		cylinder_radius = 0.8;
 		cylinder_height = 2.5;
 	}
 	std::string get_type_name() const { return "cylinder"; }

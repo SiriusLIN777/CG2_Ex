@@ -11,7 +11,7 @@ using namespace cgv::render;
 using namespace cgv::gui;
 
 #define sqr(x) ((x)*(x))
-#define abs(x) (x>0?x:-x)
+#define abs(x) (x>=0?x:-x)
 #define max(x, y, z) ((x > y) ? ((x > z) ? x : z) : ((y > z) ? y : z))
 
 template <typename T>

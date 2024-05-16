@@ -182,8 +182,6 @@ public:
 		unsigned int idx_1, idx_2;
 		idx_1 = 0; idx_2 = 1;
 
-
-
 		grad_f_p = eval_and_get_index(p, idx_1) > -eval_and_get_index(p, idx_2) ?
 			implicit_group::get_implicit_child(idx_1)->evaluate_gradient(p) :
 			implicit_group::get_implicit_child(idx_2)->evaluate_gradient(p) * -1;

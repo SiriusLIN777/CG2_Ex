@@ -1,4 +1,5 @@
-﻿#define MAX_BOX_LENGTH 2
+﻿#define MAX_BOX_LENGTH 6.0
+#define MIN_BOX_LENGTH 1.0
 //#define DEBUG_MODE
 //#define INFO_MODE
 
@@ -17,7 +18,7 @@ struct box : public implicit_primitive<T>
 	typedef typename implicit_base<T>::pnt_type pnt_type;
 
 	box() {
-		box_length = 1.0;
+		box_length = 1.5;
 		implicit_base<T>::gui_color = 0xFF8888;
 	}
 	std::string get_type_name() const { return "box"; }
@@ -37,6 +38,13 @@ struct box : public implicit_primitive<T>
 	// Implicit surface function of BOX
 	double f_box(const pnt_type& p) const
 	{
+		double f_p;
+		// Sample point is on the surface.
+		if (max(abs(p.x()), abs(p.y()), abs(p.z())) == box_length / 2)
+		{
+			if (abs(p.x()) == box_length / 2);
+		}
+
 		return  max(abs(p.x()), abs(p.y()), abs(p.z())) - box_length / 2;
 	}
 	// Implicit surface gradient function of BOX
@@ -47,27 +55,29 @@ struct box : public implicit_primitive<T>
 		/*DEBUG("max(abs(p.x()),abs(p.y()),abs(p.z())) == box_length/2" << std::endl 
 			<< max(abs(p.x()), abs(p.y()), abs(p.z())) << " == " << box_length / 2 << std::endl
 			<< "==: " << ((float)max(abs(p.x()), abs(p.y()), abs(p.z())) == box_length / 2));*/
-
-		if (max(abs(p.x()),abs(p.y()),abs(p.z())) == box_length/2) // limit the points on the surfaces of box
-		{
+		
+		//if (max(abs(p.x()),abs(p.y()),abs(p.z())) == box_length/2) // limit the points on the surfaces of box
+		//{
 			// limit to surfuce along z-axis.
 			if (abs(p.x()) == box_length / 2) // limit to surfuce along x-axis.
 			{
 				INFO("On the surface along x...");
-				//// handle inner surface, set gradient x
-				//grad.x() = p.x() > 0 ? 1 : -1;
-				//// handel y border edge
-				//if ((float)abs(p.y()) == box_length / 2)
-				//{
-				//	grad.y() = p.y() > 0 ? 1 : -1;
-				//}
-				//// handel z border edge
-				//if ((float)abs(p.z()) == box_length / 2)
-				//{
-				//	grad.z() = p.z() > 0 ? 1 : -1;
-				//}
-				//INFO("X-axis surface grad: " << grad);
-								
+
+				
+				// handle inner surface, set gradient x
+				grad.x() = p.x() > 0 ? 1 : -1;
+				// handel y border edge
+				if (abs(p.y()) == box_length / 2)
+				{
+					grad.y() = p.y() > 0 ? 1 : -1;
+				}
+				// handel z border edge
+				if (abs(p.z()) == box_length / 2)
+				{
+					grad.z() = p.z() > 0 ? 1 : -1;
+				}
+				INFO("X-axis surface grad: " << grad);
+				/*
 				grad.x() = p.x() > 0 ? 1 : -1;
 				if (p.y() == box_length / 2 && p.x() * p.y() < 0.0)
 				{
@@ -76,25 +86,27 @@ struct box : public implicit_primitive<T>
 				if (p.z() == box_length / 2 && p.x() * p.z() < 0.0)
 				{
 					grad.x() = 0.0;
-				}
+				}*/
 			}
 			if (abs(p.y()) == box_length / 2) // limit to surfuce along y-axis.
 			{
 				INFO("On the surface along y...");
-				//// handle inner surface, set gradient y
-				//grad.y() = p.y() > 0 ? 1 : -1;
-				//// handel x border edge
-				//if ((float)abs(p.x()) == box_length / 2)
-				//{
-				//	grad.x() = p.x() > 0 ? 1 : -1;
-				//}
-				//// handel z border edge
-				//if ((float)abs(p.z()) == box_length / 2)
-				//{
-				//	grad.z() = p.z() > 0 ? 1 : -1;
-				//}
-				//INFO("Y-axis surface grad: " << grad);
 
+				
+				// handle inner surface, set gradient y
+				grad.y() = p.y() > 0 ? 1 : -1;
+				// handel x border edge
+				if (abs(p.x()) == box_length / 2)
+				{
+					grad.x() = p.x() > 0 ? 1 : -1;
+				}
+				// handel z border edge
+				if (abs(p.z()) == box_length / 2)
+				{
+					grad.z() = p.z() > 0 ? 1 : -1;
+				}
+				INFO("Y-axis surface grad: " << grad);
+				/*
 				grad.y() = p.y() > 0 ? 1 : -1;
 				if (p.x() == box_length / 2 && p.y() * p.x() < 0.0)
 				{
@@ -103,25 +115,27 @@ struct box : public implicit_primitive<T>
 				if (p.z() == box_length / 2 && p.y() * p.z() < 0.0)
 				{
 					grad.y() = 0.0;
-				}
+				}*/
 			}
 			if (abs(p.z()) == box_length / 2)
 			{
 				INFO("On the surface along z...");
-				//// handle inner surface, set gradient z
-				//grad.z() = p.z() > 0 ? 1 : -1;
-				//// handel x border edge
-				//if ((float)abs(p.x()) == box_length / 2)
-				//{
-				//	grad.x() = p.x() > 0 ? 1 : -1;
-				//}
-				//// handel y border edge
-				//if ((float)abs(p.y()) == box_length / 2)
-				//{
-				//	grad.y() = p.y() > 0 ? 1 : -1;
-				//}
-				//INFO("Z-axis surface grad: " << grad);
 
+				
+				// handle inner surface, set gradient z
+				grad.z() = p.z() > 0 ? 1 : -1;
+				// handel x border edge
+				if (abs(p.x()) == box_length / 2)
+				{
+					grad.x() = p.x() > 0 ? 1 : -1;
+				}
+				// handel y border edge
+				if (abs(p.y()) == box_length / 2)
+				{
+					grad.y() = p.y() > 0 ? 1 : -1;
+				}
+				INFO("Z-axis surface grad: " << grad);
+				/*
 				grad.z() = p.z() > 0 ? 1 : -1;
 				if (p.x() == box_length / 2 && p.z() * p.x() < 0.0)
 				{
@@ -130,10 +144,12 @@ struct box : public implicit_primitive<T>
 				if (p.x() == box_length / 2 && p.z() * p.x() < 0.0)
 				{
 					grad.z() = 0.0;
-				}
+				}*/
 			}
-		}
+		//}
+		
 
+	
 		return grad;
 	}
 
@@ -153,8 +169,8 @@ struct box : public implicit_primitive<T>
 		//f_p = max_box(p) - box_length / 2;
 		//f_p = abs(p.x()) + abs(p.y()) + abs(p.z()) - box_length; // 正八面体
 
-		//f_p = max(abs(p.x()), abs(p.y()), abs(p.z())) - box_length / 2;
-		f_p = f_box(p);
+		f_p = max(abs(p.x()), abs(p.y()), abs(p.z())) - box_length / 2;
+		//f_p = f_box(p);
 
 		return f_p;
 	}
@@ -176,7 +192,7 @@ struct box : public implicit_primitive<T>
 	{
 		provider::add_decorator("Box", "Heading", "level=1");
 		provider::add_member_control(this, "box_length", box_length,
-			"value_slider", "min=0.0;max=" + std::to_string(MAX_BOX_LENGTH) + ";step=0.001;ticks=false");
+			"value_slider", "min=" + std::to_string(MIN_BOX_LENGTH) + ";max=" + std::to_string(MAX_BOX_LENGTH) + ";step=0.001;ticks=false");
 		implicit_primitive<T>::create_gui();
 	}
 };
