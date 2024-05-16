@@ -14,6 +14,7 @@
 //
 // ======================================================================================
 
+
 template <typename T>
 typename distance_surface<T>::vec_type distance_surface<T>::get_edge_distance_vector(size_t i, const pnt_type &p) const
 {
@@ -21,16 +22,79 @@ typename distance_surface<T>::vec_type distance_surface<T>::get_edge_distance_ve
 
 	// Task 1.2: Compute the distance vector from edge i to p.
 
+	// line AB edge_vector[i] = edges[i].second - edges[i].first
+	// already defined in update_edge_precomputations()
+	vec_type vec_AB = edge_vector[i];
+	// vector AP
+	vec_type vec_AP = p - edges[i].first;
+	// vector BP
+	vec_type vec_BP = p - edges[i].second;
+
+	double dotAPAB = vec_AP.x() * vec_AB.x() + \
+		vec_AP.y() * vec_AB.y() + \
+		vec_AP.z() * vec_AB.z();
+	double dotBPAB = vec_BP.x() * vec_AB.x() + \
+		vec_BP.y() * vec_AB.y() + \
+		vec_BP.z() * vec_AB.z();
+
+	double squarelenAB = vec_AB.x() * vec_AB.x() + \
+		vec_AB.y() * vec_AB.y() + \
+		vec_AB.z() * vec_AB.z();
+
+	double t = dotAPAB/ squarelenAB;
+
+	if (t < 0) {
+		v = p - edges[i].first;
+	}
+	else if (t >= 1) {
+		v = p - edges[i].second;
+	}
+	else {
+		v.x() = p.x() - (edges[i].first + t * edge_vector[i].x());
+		v.y() = p.y() - (edges[i].first + t * edge_vector[i].y());
+		v.z() = p.z() - (edges[i].first + t * edge_vector[i].z());
+	}
+
+	/*
+	double dot_product = point_vec.x() * edge_vector_inv_length[i].x() + \
+		point_vec.y() * edge_vector_inv_length[i].y() + \
+		point_vec.z() * edge_vector_inv_length[i].z();
+	double line_magnitude = edge_vector_inv_length[i].x() * edge_vector_inv_length[i].x() + \
+		edge_vector_inv_length[i].y() * edge_vector_inv_length[i].y() + \
+		edge_vector_inv_length[i].z() * edge_vector_inv_length[i].z();
+	
+	// This function may consider all edges as rays.
+	// It may provide wrong values if the edge is bounded in two points.
+	vec_type proj_point;
+	proj_point.x() = edges[i].first.x() + (dot_product / line_magnitude) * edge_vector_inv_length[i].x();
+	proj_point.y() = edges[i].first.y() + (dot_product / line_magnitude) * edge_vector_inv_length[i].y();
+	proj_point.z() = edges[i].first.z() + (dot_product / line_magnitude) * edge_vector_inv_length[i].z();
+
+	v = p - proj_point;
+	*/
+
 	return v;
 }
 
 template <typename T>
 double distance_surface<T>::get_min_distance_vector (const pnt_type &p, vec_type& v) const
 {
-	double min_dist;
+	double min_dist = std::numeric_limits<double>::infinity();
+
 
 	// Task 1.2: Compute the minimum distance from the skeleton to p, and report the
 	//           corresponding distance vector in v.
+
+	for (int i = 0; i < edge_vector.size(); i++) {
+		vec_type current_v = get_edge_distance_vector(i,p);
+		double current_d = sqrt(current_v.x() * current_v.x() + \
+			current_v.y() * current_v.y() + \
+			current_v.z() * current_v.z());
+		if (current_d < min_dist) {
+			min_dist = current_d;
+			v = current_v;
+		}
+	}
 
 	return min_dist;
 }
@@ -41,6 +105,10 @@ T distance_surface<T>::evaluate(const pnt_type& p) const
 	double f_p = std::numeric_limits<double>::infinity();
 
 	// Task 1.2: Evaluate the distance surface function at p.
+	vec_type dummy_output;
+	f_p = get_min_distance_vector(p, dummy_output) - r;
+
+
 
 	return f_p;
 }
@@ -51,6 +119,12 @@ typename distance_surface<T>::vec_type distance_surface<T>::evaluate_gradient(co
 	vec_type grad_f_p(0, 0, 0);
 
 	// Task 1.2: Return the gradient of the distance surface function at p.
+	vec_type dummy_output;
+	double val = get_min_distance_vector(p, dummy_output);
+
+	grad_f_p.x() = 1 / val * p.x();
+	grad_f_p.y() = 1 / val * p.y();
+	grad_f_p.z() = 1 / val * p.z();
 
 	return grad_f_p;
 }
