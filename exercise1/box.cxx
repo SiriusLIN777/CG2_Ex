@@ -16,6 +16,9 @@ struct box : public implicit_primitive<T>
 	double pos_x;
 	double pos_y;
 	double pos_z;
+	double roll;
+	double pitch;
+	double yaw;
 
 	typedef typename implicit_base<T>::vec_type vec_type;
 	typedef typename implicit_base<T>::pnt_type pnt_type;
@@ -25,6 +28,9 @@ struct box : public implicit_primitive<T>
 		pos_x = 0;
 		pos_y = 0;
 		pos_z = 0;
+		roll = 0;
+		pitch = 0;
+		yaw = 0;
 		implicit_base<T>::gui_color = 0xFF8888;
 	}
 	std::string get_type_name() const { return "box"; }
@@ -235,6 +241,12 @@ struct box : public implicit_primitive<T>
 			"value_slider", "min=-10;max=10;step=0.1;ticks=false");
 		provider::add_member_control(this, "pos_z", pos_z, \
 			"value_slider", "min=-10;max=10;step=0.1;ticks=false");
+		provider::add_member_control(this, "roll", roll, \
+			"value_slider", "min=-1;max=1;step=0.1;ticks=false");
+		provider::add_member_control(this, "pitch", pitch, \
+			"value_slider", "min=-1;max=1;step=0.1;ticks=false");
+		provider::add_member_control(this, "yaw", yaw, \
+			"value_slider", "min=-1;max=1;step=0.1;ticks=false");
 	}
 };
 
