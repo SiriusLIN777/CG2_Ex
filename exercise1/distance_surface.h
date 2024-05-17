@@ -1,6 +1,7 @@
 #pragma once
 
 #include "skeleton.h"
+#include "debug_macros.h"
 
 template <typename T>
 class distance_surface :  public skeleton<T>
@@ -24,6 +25,9 @@ protected:
 
 	/// update helper variables for edge i
 	virtual void update_edge_precomputations(size_t i);
+
+	/// check wheather the projection of p is on line segment AB
+	bool is_vertice(size_t i,const pnt_type& p, vec_type& vec_IP) const;
 
 public:
 	/// construct distance surface

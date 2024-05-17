@@ -1,0 +1,5 @@
+% allow for numerical gradients - set 'numeric' to true (you can do that in the GUI too)
+% to compare against your analytic gradients
+numeric_gradient[epsilon=0.0625](
+  distance_surface[n=2;x0=-0.75;y0=-0.75;z0=-0.75;x1=0.75;y1=-0.75;z1=-0.75;m=1;i0=0;j0=1]
+)
