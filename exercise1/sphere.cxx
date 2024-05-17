@@ -10,12 +10,18 @@ template <typename T>
 struct sphere : public implicit_primitive<T>
 {
 	double sphere_radius;
+	double pos_x;
+	double pos_y;
+	double pos_z;
 
 	typedef typename implicit_base<T>::vec_type vec_type;
 	typedef typename implicit_base<T>::pnt_type pnt_type;
 
 	sphere() {
 		sphere_radius = 1.0;
+		pos_x = 0;
+		pos_y = 0;
+		pos_z = 0;
 		implicit_base<T>::gui_color = 0xFF8888; 
 	}
 	std::string get_type_name() const { return "sphere"; }
@@ -70,6 +76,13 @@ struct sphere : public implicit_primitive<T>
 		provider::add_decorator("Sphere", "Heading", "level=1");
 		provider::add_member_control(this, "sphere_radius", sphere_radius, 
 			"value_slider", "min=0.0;max=" + std::to_string(MAX_SPHERE_RADIUS) + ";step=0.001;ticks=false");
+		provider::add_member_control(this, "sphere_pos_x", pos_x,\
+			"value_slider", "min=-10;max=10;step=0.1;ticks=false");
+		provider::add_member_control(this, "sphere_pos_y", pos_y, \
+			"value_slider", "min=-10;max=10;step=0.1;ticks=false");
+		provider::add_member_control(this, "sphere_pos_z", pos_z, \
+			"value_slider", "min=-10;max=10;step=0.1;ticks=false");
+
 
 		implicit_primitive<T>::create_gui();
 	}
