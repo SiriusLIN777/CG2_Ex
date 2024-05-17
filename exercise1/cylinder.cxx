@@ -134,6 +134,10 @@ struct cylinder :  public implicit_primitive<T>
 		displacement.y() -= pos_y;
 		vec_type gradient = displacement * 2;
 		gradient.z() = 0;
+
+		gradient.x() = gradient.x() * cos(pitch) * cos(yaw);
+		gradient.y() = gradient.y() * sin(roll) * sin(pitch) * sin(yaw) + cos(roll) * cos(yaw);
+		gradient.z() = gradient.z() * cos(roll) * cos(pitch);
 		return  gradient;
 		
 	}
