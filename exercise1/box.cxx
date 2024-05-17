@@ -53,14 +53,6 @@ struct box : public implicit_primitive<T>
 	/*********************************************************************************/
 	/* Helper functions for 3d rotations                                             */
 
-	void applyRotation(double R[][3], double v[], double result[]) const {
-		for (int i = 0; i < 3; i++) {
-			result[i] = 0;
-			for (int j = 0; j < 3; j++) {
-				result[i] += R[i][j] * v[j];
-			}
-		}
-	}
 	vec_type rotation3d(const vec_type vin) const {
 
 		double dvin[3];
@@ -134,14 +126,11 @@ struct box : public implicit_primitive<T>
 	{
 		double f_p;
 		// Sample point is on the surface.
-		vec_type displacement = p;
+		vec_type displacement = rotation3d(p);
+
 		displacement.x() -= pos_x;
 		displacement.y() -= pos_y;
 		displacement.z() -= pos_z;
-		if (max(abs(displacement.x()), abs(displacement.y()), abs(displacement.z())) == box_length / 2)
-		{
-			if (abs(displacement.x()) == box_length / 2);
-		}
 
 		return  max(abs(displacement.x()), abs(displacement.y()), abs(displacement.z())) - box_length / 2;
 	}
@@ -253,10 +242,11 @@ struct box : public implicit_primitive<T>
 		INFO("Computing box gradient...");
 		vec_type grad(0, 0, 0);
 
-		vec_type displacement = p;
+		vec_type displacement = rotation3d(p);
 		displacement.x() -= pos_x;
 		displacement.y() -= pos_y;
 		displacement.z() -= pos_z;
+
 		
 		if (abs(displacement.x()) >= abs(displacement.y()) && abs(displacement.x()) >= abs(displacement.z())) // x is largest.
 		{
@@ -271,8 +261,8 @@ struct box : public implicit_primitive<T>
 			grad = displacement.z() > 0 ? vec_type(0, 0, 1) : vec_type(0, 0, -1);
 		}
 
-		//return grad;
-		 return rotation3d(grad);
+		return grad;
+		// return rotation3d(grad);
 	}
 
 	/* [END] Task 1.1a
