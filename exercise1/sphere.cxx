@@ -30,16 +30,27 @@ struct sphere : public implicit_primitive<T>
 	{
 		return
 			rh.reflect_member("sphere_radius", sphere_radius) &&
+			rh.reflect_member("pos_x", pos_x) &&
+			rh.reflect_member("pos_y", pos_y) &&
+			rh.reflect_member("pos_z", pos_z) &&
 			implicit_primitive<T>::self_reflect(rh);
 	}
 	
 	double f_sphere(const pnt_type& p) const
 	{
-		return p.sqr_length() - sqr(sphere_radius);
+		vec_type displacement = p;
+		displacement.x() -= pos_x;
+		displacement.y() -= pos_y;
+		displacement.z() -= pos_z;
+		return displacement.sqr_length() - sqr(sphere_radius);
 	}
 	vec_type f_sphere_gradient(const pnt_type& p) const
 	{
-		return p * 2;
+		vec_type displacement = p;
+		displacement.x() -= pos_x;
+		displacement.y() -= pos_y;
+		displacement.z() -= pos_z;
+		return displacement * 2;
 	}
 
 	/// Evaluate the sphere quadric at p
@@ -76,11 +87,11 @@ struct sphere : public implicit_primitive<T>
 		provider::add_decorator("Sphere", "Heading", "level=1");
 		provider::add_member_control(this, "sphere_radius", sphere_radius, 
 			"value_slider", "min=0.0;max=" + std::to_string(MAX_SPHERE_RADIUS) + ";step=0.001;ticks=false");
-		provider::add_member_control(this, "sphere_pos_x", pos_x,\
+		provider::add_member_control(this, "pos_x", pos_x,\
 			"value_slider", "min=-10;max=10;step=0.1;ticks=false");
-		provider::add_member_control(this, "sphere_pos_y", pos_y, \
+		provider::add_member_control(this, "pos_y", pos_y, \
 			"value_slider", "min=-10;max=10;step=0.1;ticks=false");
-		provider::add_member_control(this, "sphere_pos_z", pos_z, \
+		provider::add_member_control(this, "pos_z", pos_z, \
 			"value_slider", "min=-10;max=10;step=0.1;ticks=false");
 
 
