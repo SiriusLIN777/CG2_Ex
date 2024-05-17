@@ -123,7 +123,8 @@ struct cylinder :  public implicit_primitive<T>
 	// Implicit surface function of Cylinder.
 	double f_cylinder(const pnt_type& p) const
 	{
-		return sqr(p.x()-pos_x) + sqr(p.y()-pos_y) - sqr(cylinder_radius);
+		vec_type rotated = rotation3d(p);
+		return sqr(rotated.x()-pos_x) + sqr(rotated.y()-pos_y) - sqr(cylinder_radius);
 	}
 	// Implicit surface gradient function of Cylinder.
 	vec_type f_cylinder_gradient(const pnt_type& p) const
