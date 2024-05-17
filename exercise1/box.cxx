@@ -49,12 +49,16 @@ struct box : public implicit_primitive<T>
 	{
 		double f_p;
 		// Sample point is on the surface.
-		if (max(abs(p.x()), abs(p.y()), abs(p.z())) == box_length / 2)
+		vec_type displacement = p;
+		displacement.x() -= pos_x;
+		displacement.y() -= pos_y;
+		displacement.z() -= pos_z;
+		if (max(abs(displacement.x()), abs(displacement.y()), abs(displacement.z())) == box_length / 2)
 		{
-			if (abs(p.x()) == box_length / 2);
+			if (abs(displacement.x()) == box_length / 2);
 		}
 
-		return  max(abs(p.x()), abs(p.y()), abs(p.z())) - box_length / 2;
+		return  max(abs(displacement.x()), abs(displacement.y()), abs(displacement.z())) - box_length / 2;
 	}
 	// Implicit surface gradient function of BOX
 	//vec_type f_box_gradient(const pnt_type& p) const
@@ -163,18 +167,23 @@ struct box : public implicit_primitive<T>
 	{
 		INFO("Computing box gradient...");
 		vec_type grad(0, 0, 0);
+
+		vec_type displacement = p;
+		displacement.x() -= pos_x;
+		displacement.y() -= pos_y;
+		displacement.z() -= pos_z;
 		
-		if (abs(p.x()) >= abs(p.y()) && abs(p.x()) >= abs(p.z())) // x is largest.
+		if (abs(displacement.x()) >= abs(displacement.y()) && abs(displacement.x()) >= abs(displacement.z())) // x is largest.
 		{
-			grad = p.x() > 0 ? vec_type(1, 0, 0) : vec_type(-1, 0, 0);
+			grad = displacement.x() > 0 ? vec_type(1, 0, 0) : vec_type(-1, 0, 0);
 		}
-		else if (abs(p.y()) >= abs(p.x()) && abs(p.y()) >= abs(p.z())) // y is lagerst.
+		else if (abs(displacement.y()) >= abs(displacement.x()) && abs(displacement.y()) >= abs(displacement.z())) // y is lagerst.
 		{
-			grad = p.y() > 0 ? vec_type(0, 1, 0) : vec_type(0, -1, 0);
+			grad = displacement.y() > 0 ? vec_type(0, 1, 0) : vec_type(0, -1, 0);
 		}
-		else if (abs(p.z()) >= abs(p.x()) && abs(p.z()) >= abs(p.y()))
+		else if (abs(displacement.z()) >= abs(displacement.x()) && abs(displacement.z()) >= abs(displacement.y()))
 		{
-			grad = p.z() > 0 ? vec_type(0, 0, 1) : vec_type(0, 0, -1);
+			grad = displacement.z() > 0 ? vec_type(0, 0, 1) : vec_type(0, 0, -1);
 		}
 
 		return grad;
