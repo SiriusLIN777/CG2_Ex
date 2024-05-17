@@ -15,6 +15,9 @@ struct cylinder :  public implicit_primitive<T>
 {
 	double cylinder_radius;
 	double cylinder_height;
+	double pos_x;
+	double pos_y;
+	double pos_z;
 
 	typedef typename implicit_base<T>::vec_type vec_type;
 	typedef typename implicit_base<T>::pnt_type pnt_type;
@@ -23,6 +26,9 @@ struct cylinder :  public implicit_primitive<T>
 		implicit_base<T>::gui_color = 0xFF8888;
 		cylinder_radius = 0.8;
 		cylinder_height = 2.5;
+		pos_x = 0;
+		pos_y = 0;
+		pos_z = 0;
 	}
 	std::string get_type_name() const { return "cylinder"; }
 
@@ -32,6 +38,9 @@ struct cylinder :  public implicit_primitive<T>
 		return
 			rh.reflect_member("cylinder_radius", cylinder_radius) &&
 			rh.reflect_member("cylinder_height", cylinder_height) &&
+			rh.reflect_member("pos_x", pos_x) &&
+			rh.reflect_member("pos_y", pos_y) &&
+			rh.reflect_member("pos_z", pos_z) &&
 			implicit_primitive<T>::self_reflect(rh);
 	}
 
@@ -110,6 +119,12 @@ struct cylinder :  public implicit_primitive<T>
 			"value_slider", "min=0.0;max=" + std::to_string(MAX_CYLINDER_RADIUS) + ";step=0.001;ticks=false");
 		/*provider::add_member_control(this, "cylinder_height", cylinder_height,
 			"value_slider", "min=0.0;max=" + std::to_string(MAX_CYLINDER_HEIGHT) + ";step=0.001;ticks=false");*/
+		provider::add_member_control(this, "pos_x", pos_x, \
+			"value_slider", "min=-10;max=10;step=0.1;ticks=false");
+		provider::add_member_control(this, "pos_y", pos_y, \
+			"value_slider", "min=-10;max=10;step=0.1;ticks=false");
+		provider::add_member_control(this, "pos_z", pos_z, \
+			"value_slider", "min=-10;max=10;step=0.1;ticks=false");
 		implicit_primitive<T>::create_gui();
 	}
 };
