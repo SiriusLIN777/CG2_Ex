@@ -54,7 +54,7 @@ public:
 
 		return f_p;
 	}
-
+	
 	vec_type evaluate_gradient(const pnt_type& p) const
 	{
 		vec_type grad_f_p(0, 0, 0);
@@ -62,22 +62,33 @@ public:
 		// Task 1.1b: Return the gradient of the union operator at p
 
 		double f_p = std::numeric_limits<double>::infinity();
-		int idx = 0;
-		for (unsigned int i = 0; i < get_nr_children(); ++i) {
-			//DEBUG("csg evaluate - " << i << ": " << eval_and_get_index(p, i));
+		for (unsigned int i = 0; i < get_nr_children(); i++) {
 			if (f_p > eval_and_get_index(p, i))
 			{
 				f_p = eval_and_get_index(p, i);
-				idx = i;
+				grad_f_p = implicit_group::get_implicit_child(i)->evaluate_gradient(p);
+			}
+			else if (f_p == eval_and_get_index(p, i))
+			{
+				DEBUG(" == " << i);
+				grad_f_p = implicit_group::get_implicit_child(i)->evaluate_gradient(p) + grad_f_p;
 			}
 			//f_p = f_p < eval_and_get_index(p, i) ? f_p : eval_and_get_index(p, i);
 			
 		}
-		grad_f_p = implicit_group::get_implicit_child(idx)->evaluate_gradient(p);
+		//grad_f_p = implicit_group::get_implicit_child(idx)->evaluate_gradient(p);
+
+		grad_f_p = grad_f_p / grad_f_p.normalize();
 
 		return grad_f_p;
 	}
+	
+
+
 };
+
+
+
 
 template <typename T>
 class intersection_node : public implicit_group<T>
@@ -110,7 +121,6 @@ public:
 		for (unsigned int i = 0; i < get_nr_children(); i++) {
 			f_p = f_p > eval_and_get_index(p, i) ? f_p : eval_and_get_index(p, i);
 		}
-
 		return f_p;
 	}
 
@@ -120,17 +130,35 @@ public:
 
 		// Task 1.1b: Return the gradient of the intersection operator at p
 		double f_p = -std::numeric_limits<double>::infinity();
-		int idx = 0;
+		//int idx = 0;
 		for (unsigned int i = 0; i < get_nr_children(); i++) {
 			//DEBUG("csg evaluate - " << i << ": " << eval_and_get_index(p, i));
+			vec_type current_gradient = implicit_group::get_implicit_child(i)->evaluate_gradient(p);
+
 			if (f_p < eval_and_get_index(p, i))
 			{
 				f_p = eval_and_get_index(p, i);
-				idx = i;
+				//idx = i;
+				grad_f_p = implicit_group::get_implicit_child(i)->evaluate_gradient(p);
 			}
-
+			else if (f_p == 0 && eval_and_get_index(p, i) == 0)
+			{
+				//DEBUG("f_p == eval_and_get_index(p, i)");
+				//DEBUG("grad_old: " << grad_f_p);
+				//DEBUG("grad_new: " << implicit_group::get_implicit_child(i)->evaluate_gradient(p));
+				f_p = eval_and_get_index(p, i);
+				grad_f_p = current_gradient + grad_f_p;
+				DEBUG("===: " << grad_f_p);
+				DEBUG("P: " << p);
+				//idx = i;
+			}
+			
 		}
-		grad_f_p = implicit_group::get_implicit_child(idx)->evaluate_gradient(p);
+		//DEBUG("intersection gradient: " << grad_f_p);
+
+		grad_f_p = grad_f_p / grad_f_p.normalize();
+
+		//grad_f_p = implicit_group::get_implicit_child(idx)->evaluate_gradient(p);
 		return grad_f_p;
 	}
 };
@@ -182,9 +210,24 @@ public:
 		unsigned int idx_1, idx_2;
 		idx_1 = 0; idx_2 = 1;
 
-		grad_f_p = eval_and_get_index(p, idx_1) > -eval_and_get_index(p, idx_2) ?
+		if (eval_and_get_index(p, idx_1) > -eval_and_get_index(p, idx_2))
+		{
+			grad_f_p = implicit_group::get_implicit_child(idx_1)->evaluate_gradient(p);
+		}
+		else if (eval_and_get_index(p, idx_1) == (eval_and_get_index(p, idx_2)* -1))
+		{
+			grad_f_p = implicit_group::get_implicit_child(idx_1)->evaluate_gradient(p) / implicit_group::get_implicit_child(idx_1)->evaluate_gradient(p).normalize()
+				+ (implicit_group::get_implicit_child(idx_2)->evaluate_gradient(p) * -1) / (implicit_group::get_implicit_child(idx_2)->evaluate_gradient(p) * -1).normalize();
+			DEBUG(" == ");
+		}
+		else
+		{
+			grad_f_p = implicit_group::get_implicit_child(idx_2)->evaluate_gradient(p) * -1;
+		}
+
+		/*grad_f_p = eval_and_get_index(p, idx_1) > -eval_and_get_index(p, idx_2) ?
 			implicit_group::get_implicit_child(idx_1)->evaluate_gradient(p) :
-			implicit_group::get_implicit_child(idx_2)->evaluate_gradient(p) * -1;
+			implicit_group::get_implicit_child(idx_2)->evaluate_gradient(p) * -1;*/
 
 		return grad_f_p;
 	}

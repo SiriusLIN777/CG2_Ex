@@ -2,12 +2,16 @@
 // chair of the TU Dresden. Do not distribute! 
 // Copyright (C) CGV TU Dresden - All Rights Reserved
 //
+#define DEBUG_MODE
+#define INFO_MODE
+
 #include "Bone.h"
 
 #include <cgv/math/transformations.h>
 #include <cgv/math/inv.h>
 
 #include "math_helper.h"
+#include "debug_macros.h"
 
 Bone::Bone()
 	: parent(nullptr), length(0.0f), direction_in_world_space(0.0, 0.0, 0.0), translationTransforms(0)
@@ -31,13 +35,51 @@ void Bone::calculate_matrices()
 	orientationTransformGlobalToLocal.identity();
 	std::for_each(orientation.begin(), orientation.end(), [&](AtomicTransform* t) {
 		orientationTransformGlobalToLocal = orientationTransformGlobalToLocal * t->calculate_matrix();
+		//DEBUG("orientation t[" << t->get_index_in_amc() << "]: " << t->get_name() << ", vale:" << t->get_value() );
+		//DEBUG("**** t: " << std::endl << t->calculate_matrix());
+		
 	});
 	orientationTransformLocalToGlobal = cgv::math::inv(orientationTransformGlobalToLocal);
-
+	//DEBUG("***********" << i << "times, " << get_name() << "-orientationTransformLocalToGlobal: " << std::endl << orientationTransformLocalToGlobal);
 	////
 	// Task 3.1: Implement matrix calculation
+		
+	////
+	// Compute Orientation from preivious joint ot current.
+	
+	// 1. Get Parent's transform.
+	orientationTransformPrevJointToCurrent.identity();
+	if (get_parent()) { 
+		//DEBUG(get_name() << " have a parent: " << parent->get_name() << " with orientation: " << std::endl << parent->orientationTransformLocalToGlobal);
+		orientationTransformPrevJointToCurrent = parent->orientationTransformLocalToGlobal; 
+	}
 
+	// 2. Compute previous to current transform.
+	orientationTransformPrevJointToCurrent = orientationTransformGlobalToLocal * orientationTransformPrevJointToCurrent;
+	std::string bone_head = get_parent() ? parent->get_name() : "null";
+	//DEBUG("****Orientation from " << bone_head << " to " << get_name() << std::endl << orientationTransformPrevJointToCurrent);
 
+	////
+	// Compute Transform from current joint ot Next.
+	// 1. Get child's tansform (how solve 2 children with just one transform?)
+	//DEBUG(get_name() << "num of children: " << children.size());
+	//DEBUG("translationTransformGlobalToLocal" << translationTransformGlobalToLocal);
+	//DEBUG("root: " << get_bone_local_root_position());
+	// 2. Compute current to next transform 
+	//translationTransformCurrentJointToNext = 
+	
+	//translationTransformCurrentJointToNext.identity();
+	//// 遍历当前关节的所有子关节
+	//for (int i = 0; i < childCount(); ++i) {
+	//	// 获取当前子关节的平移矩阵
+	//	const Mat4& childTranslation = child_at(i)->get_translation_transform_current_joint_to_next();
+
+	//	// 将当前子关节的平移矩阵与整体平移矩阵相乘
+	//	translationTransformCurrentJointToNext = translationTransformCurrentJointToNext * childTranslation;
+	//}
+	
+	
+	//DEBUG("----------" << get_name() << "-translationTransformCurrentJointToNext: " << std::endl << translationTransformCurrentJointToNext);
 
 	////
 	// Task 4.6: Implement matrix calculation (skinning)
